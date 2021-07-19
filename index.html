@@ -97,6 +97,11 @@
     .attr("y", margin.top +30 - margin.right)
     .text(chart_text);
 
+    // Add iteration count
+
+
+
+
     // var div = d3.select("body").append("div")
     // .attr("class", "tooltip")
     // .style("opacity", 0);
@@ -130,6 +135,8 @@
         .enter().append("circle")
         .style('opacity', 0.7)
         .attr("r", 3)
+        .transition()
+        .duration(duration_time)
         .attr("cx", function(d) { return x(d.X); })
         .attr("cy", function(d) { return y(d.y); })
 
@@ -177,13 +184,20 @@
         d3.csv("next_samples.csv").then(function(next_data) {
         d3.csv("initial_xy.csv").then(function(init_data) {
 
+        // clear any annotation
+        svg.select("text.nextpoint1").remove()
+        svg.select("text.nextpoint2").remove()            
+        svg.select("text.band1").remove()
+        svg.select("text.band2").remove()
+        svg.select("text.mean1").remove()
+        svg.select("text.noise").remove()
 
         // parse data
         data = data.filter(function (d) {return (d.iteration== iter) })        
         // var prev_data = next_data.filter(function (d) {return (d.iteration< iter-1) });
         // var next_point = next_data.filter(function (d) {return (d.iteration== iter-1) });
 
-
+        // clear any points
         d3.selectAll("circle.sampledpoints").remove();
         d3.selectAll("circle.nextpoint").remove();
 
@@ -238,9 +252,39 @@
             // remove for update
             d3.selectAll("path.CI")
             .datum(data).exit().remove();
+
+            // Update annotated text
+            svg.append("text")
+            .attr("class", "band1")
+            .attr("text-anchor", "left")
+            .attr("x", 80)
+            .attr("y", margin.top +325- margin.right)
+            .style("font-size", "12px")
+            .style("fill", "blue")
+            .text("bands are the 95%");
+
+            svg.append("text")
+            .attr("class", "band2")
+            .attr("text-anchor", "left")
+            .attr("x", 80)
+            .attr("y", margin.top +345- margin.right)
+            .style("font-size", "12px")
+            .style("fill", "blue")
+            .text("confidence intervals");
+
+            svg.append("text")
+            .attr("class", "mean1")
+            .attr("text-anchor", "left")
+            .attr("x", 80)
+            .attr("y", margin.top +300- margin.right)
+            .style("font-size", "12px")
+            .style("fill", "black")
+            .text("line is the GP mean");
+
         }
         // when iteration is 2 initialize first next point
         else if (iter==2){
+
 
             chart_text = "active learning cycle: " + (iter-1)
             // add next data point
@@ -257,16 +301,53 @@
             // remove for update
             d3.selectAll("circle.nextpoint")
             .data(next_data).exit().remove();
+
+
+
+            // Update annotated text
+           
+            svg
+            .append("text")
+            .attr("class", "nextpoint1")
+            .attr("text-anchor", "left")
+            .attr("x", 100)
+            .attr("y", margin.top +225- margin.right)
+            .style("font-size", "12px")
+            .style("fill", "red")
+            .text("sample point with");
+
+            svg
+            .append("text")
+            .attr("class", "nextpoint2")
+            .attr("text-anchor", "left")
+            .attr("x", 100)
+            .attr("y", margin.top +245- margin.right)
+            .style("font-size", "12px")
+            .style("fill", "red")
+            .text("highest uncertainty");
+
         }
 
         else if (iter>2){
             // set chart text
+            if (iter>6 && iter<max_iter){
+                svg
+                .append("text")
+                .attr("class", "noise")
+                .attr("text-anchor", "middle")
+                .attr("x", width/2)
+                .attr("y", margin.top +60 - margin.right)
+                .style("font-size", "12px")
+                .style("fill", "gray")
+                .text("(at this point and onward we look to be sampling noise)");
+            }
             if (iter==max_iter){
                 chart_text = "active learning cycle (max): " + (iter-1)
             }
             else {
                 chart_text = "active learning cycle: " + (iter-1)
             }
+
             // update next data point only during this stage
             var nextsample = svg.selectAll("circle.nextpoint")
             .data(next_data);
