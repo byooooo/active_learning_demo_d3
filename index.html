@@ -20,10 +20,10 @@
 
     <div class="row">
         <div class="col text-center">
-            <button onclick="update(iter-1)">prev</button>
+            <button onclick="update(-1)">prev</button>
         </div>
         <div class="col text-center">
-            <button onclick="update(iter+1)">next</button>
+            <button onclick="update(1)">next</button>
         </div>
 
     </div>
@@ -100,6 +100,10 @@
 
     var duration_time = 800
 
+    var old_x = 0
+    var old_y = 0
+
+    
 
     function initialize(){
         //read the data
@@ -142,11 +146,10 @@
         })
 
 
-
     }
             
-    function update(shifted){               
-        iter = shifted
+    function update(shift){               
+        iter = iter + shift
         
         // do nothing when check when iteration is out of points
         if (iter <0) {
@@ -409,6 +412,16 @@
         .data(next_data)
         // remove previous data
         nextsample.exit().remove()
+
+        
+        .append("circle")
+        if (iter-1-shift > 0){
+        var prev = next_data.filter(function(d) {return d.iteration==(iter-1-shift)})
+        old_x = prev[0].X
+        old_y = prev[0].y
+        }
+
+
         // append data
         nextsample
         .enter()
@@ -418,8 +431,13 @@
         .attr("class", "nextpoint")
         .attr("r", "4")
         .attr("fill", "red")
+        .attr("cx", function(d) {return x(old_x)})
+        .attr("cy", function(d) {return y(old_y)})
+        .transition()
+        .duration(500)
         .attr("cx", function(d) {return x(d.X)})
         .attr("cy", function(d) {return y(d.y)})
+        
 
     })
     })
