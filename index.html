@@ -124,7 +124,7 @@
     var timer;
     var isplaying = false
     function toggleplay(){
-        if (playbutton.text()=="restart"){
+        if (playbutton.text()=="replay"){
             initialize()
         }
         if (isplaying) {
@@ -140,7 +140,7 @@
                 else{
                     clearInterval(timer)
                     if (iter==max_iter){
-                        playbutton.text("restart") 
+                        playbutton.text("replay") 
                     }
                     else{
                         playbutton.text("play") 
