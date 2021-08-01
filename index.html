@@ -192,8 +192,11 @@
             d3.select("#tooltipx").remove();
             d3.select("#tooltipy").remove();
         })
+        .transition()
+        .duration(duration_time)
         .attr("cx", function(d) { return x(d.X) })
         .attr("cy", function(d) { return y(d.y) })
+
 
         })
 
