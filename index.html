@@ -124,6 +124,9 @@
     var timer;
     var isplaying = false
     function toggleplay(){
+
+
+
         if (playbutton.text()=="replay"){
             initialize()
         }
@@ -206,6 +209,8 @@
         if (shift<0){
             playbutton.text("play") 
         }
+            
+
         // do nothing when check when iteration is out of points
         if (iter <0) {
             iter = 0
@@ -228,7 +233,8 @@
         svg.select("text.band2").remove()
         svg.select("text.mean1").remove()
         svg.select("text.noise").remove()
-
+        d3.select("#tooltipx").remove();
+        d3.select("#tooltipy").remove();
         // parse data
         data = data.filter(function (d) {return (d.iteration== iter) })
         // note: will need to use .datum() next time we load it to obj
